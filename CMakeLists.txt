@@ -47,7 +47,7 @@ option(USE_DISCORD_PRESENCE "Enables Discord Rich Presence, show the current gam
 option(ENABLE_ANALYTICS "Enables opt-in Analytics collection" OFF)
 
 # Enable Playback build for Slippi for watching replays
-option(SLIPPI_PLAYBACK "Enable Playback changes" ON)
+option(SLIPPI_PLAYBACK "Enable Playback changes" OFF)
 
 option(ENCODE_FRAMEDUMPS "Encode framedumps in AVI format" ON)
 
@@ -305,10 +305,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   # Set -fno-objc-exceptions, for consistency with -fno-exceptions earlier.
   # If we set only -fno-exceptions, fmt fails to compile when included from
   # Objective-C++ because fmt tries try to use throw because __EXCEPTIONS is defined.
-  #
-  # TODO: Only enable this for Objective-C(++).
-  # We get warnings if we enable this when building regular C(++) code.
-  check_and_add_flag(NO_OBJC_EXCEPTIONS -fno-objc-exceptions)
+  add_compile_options("$<$<COMPILE_LANGUAGE:OBJC>:-fno-objc-exceptions>")
+  add_compile_options("$<$<COMPILE_LANGUAGE:OBJCXX>:-fno-objc-exceptions>")
+  dolphin_compile_definitions(FMT_EXCEPTIONS=0)
 
   find_library(APPKIT_LIBRARY AppKit)
   find_library(APPSERV_LIBRARY ApplicationServices)
